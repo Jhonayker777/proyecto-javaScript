@@ -1,342 +1,278 @@
-/* ===================================================== */
-/* ESTILOS GLOBALES Y REINICIO (RESET)                   */
-/* ===================================================== */
+/* ========================================== */
+/* ESTILOS PRINCIPALES - VERSIÓN CLARA       */
+/* ========================================== */
+
+/* Reset básico */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* FONDO GENERAL DE LA APLICACIÓN */
 body {
-  background: linear-gradient(145deg, #eef2f7 0%, #d9e2ec 100%);
-  min-height: 100vh;
-  padding: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    padding: 20px;
 }
 
-/* ===================================================== */
-/* CONTENEDOR PRINCIPAL                                  */
-/* ===================================================== */
-.app-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 40px;
-  backdrop-filter: blur(2px);
-  padding: 1.5rem;
-  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.1);
+/* Contenedor principal */
+.contenedor {
+    max-width: 1300px;
+    margin: 0 auto;
 }
 
-/* ================= HEADER ================= */
-.main-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid rgba(43, 110, 158, 0.3);
+/* ========== HEADER ========== */
+.header {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-area i {
-  font-size: 2.2rem;
-  color: #1e4a6e;
-}
-
-.logo-area h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #0f2c3b;
-}
-
-.logo-area span {
-  color: #e67e22;
-  background: #fef3e2;
-  padding: 0 8px;
-  border-radius: 40px;
-  font-size: 1.5rem;
-}
-
-/* ========== WIDGET DEL CLIMA (ACTUALIZADO CON API) ========== */
-.weather-widget {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-  border-radius: 60px;
-  padding: 0.6rem 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  color: #2c3e4e;
-}
-
-.weather-widget i {
-  font-size: 1.4rem;
-  color: #f39c12;
-}
-
-/* ================= DASHBOARD (FORMULARIOS) ================= */
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-}
-
-/* TARJETAS DE FORMULARIO */
-.form-card {
-  background: white;
-  border-radius: 32px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-  transition: 0.2s;
-  border: 1px solid #ffffff80;
-}
-
-.form-card h2 {
-  font-size: 1.4rem;
-  margin-bottom: 1.2rem;
-  color: #1e4a6e;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* GRUPOS DE INPUTS Y SELECTS */
-.input-group {
-  margin-bottom: 1.2rem;
-}
-
-.input-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 6px;
-  font-size: 0.85rem;
-  color: #2c3e4e;
-}
-
-.input-group input,
-.input-group select {
-  width: 100%;
-  padding: 12px 15px;
-  border-radius: 40px;
-  border: 1.5px solid #e2e8f0;
-  background: #fefefe;
-  font-size: 0.9rem;
-  transition: 0.2s;
-}
-
-.input-group input:focus,
-.input-group select:focus {
-  outline: none;
-  border-color: #2b6e9e;
-  box-shadow: 0 0 0 3px rgba(43, 110, 158, 0.2);
-}
-
-/* ========== BOTONES ========== */
-.btn {
-  border: none;
-  padding: 10px 20px;
-  border-radius: 40px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: 0.2s;
-  font-size: 0.85rem;
-}
-
-.btn.primary {
-  background: #2b6e9e;
-  color: white;
-}
-
-.btn.primary:hover {
-  background: #1e5a82;
-  transform: scale(1.02);
-}
-
-.btn.success {
-  background: #27ae60;
-  color: white;
-}
-
-.btn.success:hover {
-  background: #1e8a4d;
-}
-
-.btn.secondary {
-  background: #95a5a6;
-  color: white;
-}
-
-.btn.secondary:hover {
-  background: #7f8c8d;
-}
-
-.btn.danger {
-  background: #dc3545;
-  color: white;
-}
-
-.btn.danger:hover {
-  background: #c82333;
-}
-
-/* CLASE UTILITARIA PARA OCULTAR ELEMENTOS */
-.hidden {
-  display: none;
-}
-
-.form-buttons {
-  display: flex;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-/* ================= SECCIÓN DE RUTAS ================= */
-.routes-section {
-  margin-top: 1rem;
-}
-
-.routes-section h2 {
-  margin-bottom: 1.2rem;
-  color: #0f2c3b;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1.6rem;
-}
-
-/* GRID RESPONSIVO PARA LAS TARJETAS DE RUTAS */
-.routes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1.8rem;
-}
-
-/* MENSAJE CUANDO NO HAY RUTAS */
-.empty-message {
-  grid-column: 1 / -1;
-  text-align: center;
-  background: #f1f5f9;
-  padding: 3rem;
-  border-radius: 48px;
-  color: #475569;
-  font-weight: 500;
-}
-
-/* ===================================================== */
-/* BREAKPOINTS (RESPONSIVE - 3 PUNTOS DE QUIEBRE)       */
-/* ===================================================== */
-
-/* BREAKPOINT 1: TABLETS GRANDES / ESCRITORIO PEQUEÑO (HASTA 1024px) */
-@media (max-width: 1024px) {
-  body {
-    padding: 1rem;
-  }
-  .app-container {
-    padding: 1rem;
-  }
-  .logo-area h1 {
-    font-size: 1.5rem;
-  }
-  .routes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
-}
-
-/* BREAKPOINT 2: TABLETS / MÓVILES GRANDES (HASTA 768px) */
-@media (max-width: 768px) {
-  .main-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  .weather-widget {
-    align-self: stretch;
-    justify-content: center;
-  }
-  .dashboard {
-    grid-template-columns: 1fr;
-  }
-  .form-card {
-    padding: 1.2rem;
-  }
-  .routes-grid {
-    grid-template-columns: 1fr;
-  }
-  .btn {
-    width: 100%;
-    justify-content: center;
-  }
-  .form-buttons {
-    flex-direction: column;
-  }
-}
-
-/* BREAKPOINT 3: MÓVILES PEQUEÑOS (HASTA 480px) */
-@media (max-width: 480px) {
-  .logo-area h1 {
-    font-size: 1.3rem;
-  }
-  .logo-area i {
+.logo h1 {
+    color: #2c3e50;
     font-size: 1.8rem;
-  }
-  .routes-section h2 {
+}
+
+.logo span {
+    color: #e74c3c;
+}
+
+.clima {
+    background: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+}
+
+/* ========== FORMULARIOS ========== */
+.formularios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.tarjeta {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.tarjeta h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
     font-size: 1.3rem;
-  }
-  .weather-widget {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.8rem;
-  }
-  .input-group input,
-  .input-group select {
+}
+
+.campo {
+    margin-bottom: 15px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
     padding: 10px 12px;
-  }
-  .btn {
-    font-size: 0.8rem;
-  }
-  .empty-message {
-    padding: 2rem;
-    font-size: 0.9rem;
-  }
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
 }
 
-/* ===================================================== */
-/* UTILIDADES ADICIONALES                               */
-/* ===================================================== */
-
-/* SCROLL SUAVE PARA TODA LA PÁGINA */
-html {
-  scroll-behavior: smooth;
+.campo input:focus,
+.campo select:focus {
+    outline: none;
+    border-color: #3498db;
 }
 
-/* MEJORA DE ACCESIBILIDAD PARA FOCUS VISIBLE */
-button:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid #2b6e9e;
-  outline-offset: 2px;
+/* Botones */
+.grupo-botones {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
-/* CLASE PARA ERRORES DE VALIDACIÓN (SE PUEDE APLICAR DESDE JS) */
-.error-border {
-  border-color: #e74c3c !important;
-  background-color: #fff5f5 !important;
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
 }
 
-/* ASEGURA QUE LOS WEB COMPONENTS OCUPEN TODO EL ANCHO DISPONIBLE */
-route-card {
-  display: block;
-  width: 100%;
+.btn-guardar {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-guardar:hover {
+    background: #219a52;
+}
+
+.btn-asignar {
+    background: #3498db;
+    color: white;
+    width: 100%;
+}
+
+.btn-asignar:hover {
+    background: #2980b9;
+}
+
+.btn-cancelar {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background: #c0392b;
+}
+
+/* Clase para ocultar elementos */
+.oculto {
+    display: none;
+}
+
+/* ========== SECCIÓN DE RUTAS ========== */
+.seccion-rutas {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.seccion-rutas h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.lista-rutas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mensaje-vacio {
+    text-align: center;
+    padding: 50px;
+    color: #999;
+    font-style: italic;
+}
+
+/* ========== ESTADÍSTICAS ========== */
+.estadisticas {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.caja-estadistica {
+    padding: 15px;
+}
+
+.numero {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+.texto {
+    color: #666;
+    margin-top: 5px;
+}
+
+/* ========== CLASE PARA ERRORES ========== */
+.error-input {
+    border-color: #e74c3c !important;
+    background-color: #ffe6e6;
+}
+
+.error-mensaje {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* ========== RESPONSIVE ========== */
+
+/* Breakpoint 1: Tablets (1024px) */
+@media (max-width: 1024px) {
+    .formularios {
+        gap: 20px;
+    }
+    
+    .contenedor {
+        padding: 0 10px;
+    }
+}
+
+/* Breakpoint 2: Tablets pequeñas (768px) */
+@media (max-width: 768px) {
+    .formularios {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .estadisticas {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .grupo-botones {
+        flex-direction: column;
+    }
+    
+    button {
+        width: 100%;
+    }
+}
+
+/* Breakpoint 3: Móviles (480px) */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+    
+    .tarjeta {
+        padding: 15px;
+    }
+    
+    .clima {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+    
+    .numero {
+        font-size: 1.8rem;
+    }
 }

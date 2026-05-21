@@ -1,425 +1,219 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="Sistema de gestión de rutas escolares y asignación de estudiantes">
-  <title>Rutas Seguras Kids | Gestión Escolar</title>
-
-  <!-- ============================================ -->
-  <!-- HOJA DE ESTILOS SEPARADA                     -->
-  <!-- ============================================ -->
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- ============================================ -->
-  <!-- FONT AWESOME (SOLO ICONOS, NO ES FRAMEWORK)  -->
-  <!-- ============================================ -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rutas Seguras Kids</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-  <!-- ============================================ -->
-  <!-- ============ HEADER PRINCIPAL ============== -->
-  <!-- ============================================ -->
-  <header class="main-header">
-    <div class="logo-area">
-      <i class="fas fa-school" aria-hidden="true"></i>
-      <h1>Rutas Seguras <span>Kids</span></h1>
+    <!-- ========== CONTENEDOR PRINCIPAL ========== -->
+    <div class="contenedor">
+
+        <!-- ========== HEADER ========== -->
+        <div class="header">
+            <div class="logo">
+                <h1>🚌 Rutas Seguras <span>Kids</span></h1>
+            </div>
+            <div class="clima" id="clima">
+                <span>🌤️ Cargando clima...</span>
+            </div>
+        </div>
+
+        <!-- ========== FORMULARIOS ========== -->
+        <div class="formularios">
+
+            <!-- FORMULARIO 1: Gestionar Ruta -->
+            <div class="tarjeta">
+                <h2>📋 Gestionar Ruta</h2>
+                <form id="formRuta">
+                    <!-- Campo oculto para saber si estamos editando -->
+                    <input type="hidden" id="editandoId" value="">
+                    
+                    <div class="campo">
+                        <label>Nombre de la ruta:</label>
+                        <input type="text" id="nombreRuta" placeholder="Ej: Ruta Norte" required>
+                    </div>
+
+                    <div class="campo">
+                        <label>Conductor:</label>
+                        <input type="text" id="conductor" placeholder="Ej: Juan Pérez" required>
+                    </div>
+
+                    <div class="campo">
+                        <label>Hora de salida:</label>
+                        <input type="time" id="horaSalida" required>
+                    </div>
+
+                    <div class="grupo-botones">
+                        <button type="submit" class="btn-guardar">💾 Guardar Ruta</button>
+                        <button type="button" id="cancelarBtn" class="btn-cancelar oculto">❌ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- FORMULARIO 2: Asignar Estudiante -->
+            <div class="tarjeta">
+                <h2>👨‍🎓 Asignar Estudiante</h2>
+                <form id="formEstudiante">
+                    <div class="campo">
+                        <label>Nombre del estudiante:</label>
+                        <input type="text" id="nombreEstudiante" placeholder="Ej: María López" required>
+                    </div>
+
+                    <div class="campo">
+                        <label>Seleccionar ruta:</label>
+                        <select id="selectRuta" required>
+                            <option value="">-- Selecciona una ruta --</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-asignar">➕ Asignar Estudiante</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ========== LISTA DE RUTAS ========== -->
+        <div class="seccion-rutas">
+            <h2>🚍 Mis Rutas</h2>
+            <div id="contenedorRutas" class="lista-rutas">
+                <div class="mensaje-vacio">✨ No hay rutas. ¡Crea una!</div>
+            </div>
+        </div>
+
+        <!-- ========== ESTADÍSTICAS ========== -->
+        <div class="estadisticas">
+            <div class="caja-estadistica">
+                <div class="numero" id="totalRutas">0</div>
+                <div class="texto">Total Rutas</div>
+            </div>
+            <div class="caja-estadistica">
+                <div class="numero" id="totalEstudiantes">0</div>
+                <div class="texto">Estudiantes</div>
+            </div>
+            <div class="caja-estadistica">
+                <div class="numero" id="promedioRuta">0</div>
+                <div class="texto">Promedio por Ruta</div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- ========== WIDGET DEL CLIMA ========== -->
-    <!-- SE ACTUALIZARÁ DINÁMICAMENTE CON FETCH A OPENWEATHER API -->
-    <div class="weather-widget" id="weatherWidget">
-      <i class="fas fa-cloud-sun" aria-hidden="true"></i>
-      
-    </div>
-  </header>
-
-  <!-- ============================================ -->
-  <!-- ============ MAIN CONTENT ================== -->
-  <!-- ============================================ -->
-  <main class="main-content">
-
-    <!-- ========== SECCIÓN DE FORMULARIOS ========== -->
-    <!-- CONTIENE LOS DOS FORMULARIOS PRINCIPALES      -->
-    <section class="forms-section" aria-labelledby="forms-title">
-      <h2 id="forms-title" class="visually-hidden">Panel de gestión</h2>
-
-      <div class="forms-grid">
-
-        <!-- ========== FORMULARIO: GESTIÓN DE RUTAS ========== -->
-        <!-- PERMITE CREAR NUEVAS RUTAS O EDITAR EXISTENTES    -->
-        <article class="form-card" aria-label="Formulario de rutas">
-          <header class="card-header-form">
-            <i class="fas fa-bus" aria-hidden="true"></i>
-            <h3>Gestionar Ruta</h3>
-          </header>
-
-          <form id="routeForm" novalidate>
-            <!-- CAMPO OCULTO: ALMACENA EL ID DE LA RUTA EN EDICIÓN -->
-            <!-- SI ESTÁ VACÍO = CREAR NUEVA, SI TIENE ID = EDITAR   -->
-            <input type="hidden" id="editRouteId" value="">
-
-            <div class="input-group">
-              <label for="routeName">
-                <i class="fas fa-road" aria-hidden="true"></i>
-                Nombre de la ruta
-              </label>
-              <input type="text" id="routeName" name="routeName" placeholder="Ej: Ruta Norte, Ruta Sur" required
-                aria-required="true">
+    <!-- ========== TEMPLATE PARA WEB COMPONENT ========== -->
+    <!-- Este template se usará dentro del Shadow DOM -->
+    <template id="tarjetaTemplate">
+        <style>
+            /* Estilos que SOLO afectan a esta tarjeta */
+            .tarjeta-ruta {
+                background: white;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin-bottom: 15px;
+            }
+            .cabecera {
+                background: #2c3e50;
+                color: white;
+                padding: 12px 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .cabecera h3 {
+                margin: 0;
+                font-size: 1.1rem;
+            }
+            .botones {
+                display: flex;
+                gap: 8px;
+            }
+            .botones button {
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            .botones button:hover {
+                background: rgba(255,255,255,0.4);
+            }
+            .contenido {
+                padding: 15px;
+            }
+            .info {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #eee;
+            }
+            .info p {
+                margin: 5px 0;
+                color: #555;
+            }
+            .lista {
+                margin-top: 10px;
+            }
+            .lista h4 {
+                margin: 0 0 10px 0;
+                color: #2c3e50;
+            }
+            .estudiantes {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .estudiante {
+                background: #ecf0f1;
+                padding: 4px 10px;
+                border-radius: 20px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+            }
+            .borrar-estudiante {
+                background: none;
+                border: none;
+                color: #e74c3c;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .sin-estudiantes {
+                color: #999;
+                font-style: italic;
+                font-size: 13px;
+            }
+            @media (max-width: 768px) {
+                .cabecera {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 8px;
+                }
+            }
+        </style>
+        
+        <div class="tarjeta-ruta">
+            <div class="cabecera">
+                <h3 class="nombre-ruta">Nombre</h3>
+                <div class="botones">
+                    <button class="editar-btn">✏️ Editar</button>
+                    <button class="eliminar-btn">🗑️ Eliminar</button>
+                </div>
             </div>
-
-            <div class="input-group">
-              <label for="driverName">
-                <i class="fas fa-user-circle" aria-hidden="true"></i>
-                Conductor
-              </label>
-              <input type="text" id="driverName" name="driverName" placeholder="Nombre completo del conductor" required
-                aria-required="true">
+            <div class="contenido">
+                <div class="info">
+                    <p>🚍 Conductor: <span class="conductor-texto"></span></p>
+                    <p>⏰ Hora: <span class="hora-texto"></span></p>
+                </div>
+                <div class="lista">
+                    <h4>📚 Estudiantes asignados:</h4>
+                    <div class="estudiantes"></div>
+                </div>
             </div>
-
-            <div class="input-group">
-              <label for="departureTime">
-                <i class="fas fa-clock" aria-hidden="true"></i>
-                Hora de salida
-              </label>
-              <input type="time" id="departureTime" name="departureTime" required aria-required="true">
-            </div>
-
-            <div class="form-buttons">
-              <button id="btnNuevo" class="btn primary">
-                <i class="fas fa-save" aria-hidden="true"></i>
-                Guardar ruta
-              </button>
-              <button type="button" id="cancelEditBtn" class="btn secondary hidden">
-                <i class="fas fa-times" aria-hidden="true"></i>
-                Cancelar edición
-              </button>
-            </div>
-          </form>
-        </article>
-
-        <!-- ========== FORMULARIO: ASIGNAR ESTUDIANTES ========== -->
-        <!-- PERMITE ASIGNAR UN ESTUDIANTE A UNA RUTA EXISTENTE   -->
-        <article class="form-card" aria-label="Formulario de asignación de estudiantes">
-          <header class="card-header-form">
-            <i class="fas fa-user-plus" aria-hidden="true"></i>
-            <h3>Asignar Estudiante</h3>
-          </header>
-
-          <form id="studentForm" novalidate>
-            <div class="input-group">
-              <label for="studentName">
-                <i class="fas fa-child" aria-hidden="true"></i>
-                Nombre del estudiante
-              </label>
-              <input type="text" id="studentName" name="studentName" placeholder="Ej: María López, Juan Pérez" required
-                aria-required="true">
-            </div>
-
-            <div class="input-group">
-              <label for="routeSelect">
-                <i class="fas fa-route" aria-hidden="true"></i>
-                Seleccionar ruta
-              </label>
-              <select id="routeSelect" name="routeSelect" required aria-required="true">
-                <option value="">-- Elige una ruta --</option>
-                <!-- LAS OPCIONES SE CARGARÁN DINÁMICAMENTE CON JavaScript -->
-              </select>
-            </div>
-
-            <button type="submit" class="btn success">
-              <i class="fas fa-plus-circle" aria-hidden="true"></i>
-              Asignar estudiante
-            </button>
-          </form>
-        </article>
-      </div>
-    </section>
-
-    <!-- ========== SECCIÓN DE LISTADO DE RUTAS ========== -->
-    <!-- AQUÍ SE INYECTARÁN LOS WEB COMPONENTS <route-card> -->
-    <section class="routes-section" aria-labelledby="routes-title">
-      <header class="section-header">
-        <h2 id="routes-title">
-          <i class="fas fa-map-marked-alt" aria-hidden="true"></i>
-          Rutas Activas
-        </h2>
-        <p class="section-description">Administra las rutas y sus estudiantes asignados</p>
-      </header>
-
-      <!-- CONTENEDOR DINÁMICO PARA LAS TARJETAS DE RUTAS -->
-      <div id="routesContainer" class="routes-grid">
-        <!-- MENSAJE INICIAL (SE REEMPLAZARÁ CUANDO HAYA RUTAS) -->
-        <article class="empty-message" aria-label="Sin rutas">
-          <i class="fas fa-info-circle" aria-hidden="true"></i>
-          <p>No hay rutas creadas. ¡Agrega una!</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- ========== SECCIÓN DE ESTADÍSTICAS (OPCIONAL) ========== -->
-    <!-- SE ACTUALIZARÁ DINÁMICAMENTE CON JavaScript              -->
-    <aside class="stats-sidebar" aria-labelledby="stats-title">
-      <h3 id="stats-title">
-        <i class="fas fa-chart-line" aria-hidden="true"></i>
-        Estadísticas
-      </h3>
-      <div class="stats-content" id="statsContent">
-        <div class="stat-item">
-          <span class="stat-label">Total rutas:</span>
-          <span class="stat-value" id="totalRoutes">0</span>
         </div>
-        <div class="stat-item">
-          <span class="stat-label">Total estudiantes:</span>
-          <span class="stat-value" id="totalStudents">0</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Promedio por ruta:</span>
-          <span class="stat-value" id="avgPerRoute">0</span>
-        </div>
-      </div>
-    </aside>
-  </main>
+    </template>
 
-  <!-- ============================================ -->
-  <!-- ============ FOOTER PRINCIPAL ============== -->
-  <!-- ============================================ -->
-  <footer class="main-footer">
-    <div class="footer-content">
-      <p>&copy; 2026 Rutas Seguras Kids - Gestión de transporte escolar</p>
-      <div class="footer-links">
-        <a href="#" aria-label="Acerca de"><i class="fas fa-info-circle"></i> Acerca de</a>
-        <a href="#" aria-label="Ayuda"><i class="fas fa-question-circle"></i> Ayuda</a>
-        <a href="#" aria-label="Contacto"><i class="fas fa-envelope"></i> Contacto</a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ============================================ -->
-  <!-- ============ TEMPLATE WEB COMPONENT ======== -->
-  <!-- SE USA CON SHADOW DOM PARA CADA TARJETA      -->
-  <!-- ============================================ -->
-  <template id="routeCardTemplate">
-    <!-- ESTILOS ENCAPSULADOS DENTRO DEL SHADOW DOM -->
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      .route-card {
-        background: white;
-        border-radius: 24px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: transform 0.2s ease, box-shadow 0.2s;
-        border: 1px solid #eef2f6;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .route-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.2);
-      }
-
-      .card-header {
-        background: linear-gradient(135deg, #2b6e9e, #1e4a6e);
-        color: white;
-        padding: 1rem 1.2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .route-title {
-        font-size: 1.3rem;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .route-actions {
-        display: flex;
-        gap: 12px;
-      }
-
-      .route-actions button {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        font-size: 0.85rem;
-        cursor: pointer;
-        border-radius: 30px;
-        padding: 6px 12px;
-        transition: all 0.2s;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-
-      .route-actions button:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: scale(1.02);
-      }
-
-      .delete-route-btn {
-        background: rgba(220, 53, 69, 0.8);
-      }
-
-      .delete-route-btn:hover {
-        background: #dc3545 !important;
-      }
-
-      .card-body {
-        padding: 1.2rem;
-        flex: 1;
-      }
-
-      .info-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-        font-size: 0.9rem;
-        color: #2c3e4e;
-        padding: 6px 0;
-      }
-
-      .info-row i {
-        width: 24px;
-        color: #2b6e9e;
-        font-size: 1rem;
-      }
-
-      .students-list {
-        margin-top: 15px;
-        border-top: 1px dashed #cbd5e1;
-        padding-top: 12px;
-      }
-
-      .students-title {
-        font-weight: 600;
-        margin-bottom: 10px;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #4b5563;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .students-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-
-      .student-item {
-        background: #f1f5f9;
-        padding: 5px 12px;
-        border-radius: 40px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.8rem;
-        transition: 0.2s;
-      }
-
-      .student-item:hover {
-        background: #e2e8f0;
-      }
-
-      .student-item button {
-        background: none;
-        border: none;
-        color: #dc2626;
-        cursor: pointer;
-        font-size: 0.75rem;
-        font-weight: bold;
-        padding: 2px 4px;
-        border-radius: 50%;
-        transition: 0.2s;
-      }
-
-      .student-item button:hover {
-        transform: scale(1.2);
-        color: #991b1b;
-      }
-
-      .no-students {
-        color: #94a3b8;
-        font-style: italic;
-        font-size: 0.8rem;
-        padding: 8px 0;
-      }
-
-      @media (max-width: 768px) {
-        .card-header {
-          flex-direction: column;
-          text-align: center;
-        }
-
-        .route-title {
-          justify-content: center;
-        }
-      }
-    </style>
-
-    <!-- ESTRUCTURA SEMÁNTICA DE LA TARJETA -->
-    <article class="route-card" aria-label="Tarjeta de ruta">
-      <header class="card-header">
-        <div class="route-title">
-          <i class="fas fa-bus" aria-hidden="true"></i>
-          <span class="route-name-display">Nombre ruta</span>
-        </div>
-        <div class="route-actions">
-          <button class="edit-route-btn" aria-label="Editar ruta">
-            <i class="fas fa-edit" aria-hidden="true"></i>
-            Editar
-          </button>
-          <button class="delete-route-btn delete-route" aria-label="Eliminar ruta">
-            <i class="fas fa-trash-alt" aria-hidden="true"></i>
-            Eliminar
-          </button>
-        </div>
-      </header>
-
-      <div class="card-body">
-        <div class="info-row">
-          <i class="fas fa-user-check" aria-hidden="true"></i>
-          <span><strong>Conductor:</strong> <span class="driver-display"></span></span>
-        </div>
-        <div class="info-row">
-          <i class="fas fa-hourglass-start" aria-hidden="true"></i>
-          <span><strong>Salida:</strong> <span class="time-display"></span></span>
-        </div>
-
-        <div class="students-list">
-          <div class="students-title">
-            <i class="fas fa-users" aria-hidden="true"></i>
-            Estudiantes asignados
-          </div>
-          <div class="students-container">
-            <!-- LOS ESTUDIANTES SE INYECTARÁN DINÁMICAMENTE -->
-          </div>
-        </div>
-      </div>
-    </article>
-  </template>
-
-  <!-- ============================================ -->
-  <!-- ARCHIVO JAVASCRIPT PRINCIPAL (SEPARADO)      -->
-  <!-- ============================================ -->
-  <script src= "/javaScript/app.js"></script>
+    <script src="/javaScript/app.js"></script>
 </body>
 </html>
