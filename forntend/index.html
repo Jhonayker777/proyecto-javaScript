@@ -51,7 +51,7 @@
 
           <div class="grupo-botones">
             <button type="submit" class="btn-guardar">💾 Guardar Ruta</button>
-            <!--<button type="button" id="cancelarBtn" class="btn-cancelar">❌ Cancelar</button>-->
+            <button type="button" id="cancelarBtn" style="display: none;">Cancelar Edición</button>
           </div>
         </form>
       </div>
@@ -80,15 +80,10 @@
     <!-- ========== LISTA DE RUTAS ========== -->
     <div class="seccion-rutas">
       <h2>🚍 Mis Rutas</h2>
+      
       <div id="contenedorRutas" class="lista-rutas">
-        <div-tarjeta
-        nombreRuta= "Flota Cachira"
-        conductor= "${element.conductor}"
-        hora= "${element.hora}"
-        editar = "${element.btnEditar}"
-        eliminar = "${element.btnCancelar}"
-        ></div-tarjeta>
         <div class="mensaje-vacio">✨ No hay rutas. ¡Crea una!</div>
+      
       </div>
     </div>
 
@@ -110,7 +105,37 @@
 
   </div>
 
-
+  <!-- Modal para editar ruta -->
+<div id="modalEditarRuta" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>✏️ Editar Ruta</h2>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="modalEditandoId">
+            
+            <div class="modal-field">
+                <label>Nombre de la ruta:</label>
+                <input type="text" id="modalNombreRuta" placeholder="Ej: Ruta Norte">
+            </div>
+            
+            <div class="modal-field">
+                <label>Conductor:</label>
+                <input type="text" id="modalConductor" placeholder="Ej: Juan Pérez">
+            </div>
+            
+            <div class="modal-field">
+                <label>Hora de salida:</label>
+                <input type="time" id="modalHoraSalida">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancelar" id="modalCancelarBtn">Cancelar</button>
+            <button type="button" class="btn-guardar" id="modalGuardarBtn">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
 
   <script src="/javaScript/app.js"></script>
 </body>
