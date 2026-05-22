@@ -44,7 +44,7 @@ function mostrarError(valor, contenderoValor) {
     const alerta = document.createElement('div')
     alerta.textContent = "⚠️ Este campo es obligatorio";
     alerta.id = "toast-nombreRuta"
-    alerta.className ="toast-alerta"
+    alerta.className = "toast-alerta"
 
     contenderoValor.appendChild(alerta)
 
@@ -52,32 +52,33 @@ function mostrarError(valor, contenderoValor) {
 
     setTimeout(() => {
         alerta.classList.remove('mostrar');
-        
+
     }, 3000);
 
 }
 
 function validacionesRutas() {
+    let validado = true
     if (inputNombreRuta.value.trim() === "") {
         mostrarError(inputNombreRuta, contenedorInputRuta);
-        return false
+        validado = false
     }
 
     if (inputConductor.value.trim() === "") {
         mostrarError(inputConductor, contenedorInputConductor);
-        return false
+        validado = false
     }
 
     if (inputHoraSalida.value.trim() === "") {
         mostrarError(inputHoraSalida, contendedorHoraSalida);
-        return false
+        validado = false
     }
 
-    return true
+    return validado
 }
 
 function clear(tipoformulario) {
-    if ( tipoformulario === formularioRuta) {
+    if (tipoformulario === formularioRuta) {
         const todosLosInputs = document.querySelectorAll('#formRuta input');
         todosLosInputs.forEach(input => {
             input.value = '';
@@ -98,12 +99,12 @@ function clear(tipoformulario) {
 
 }
 
-formularioRuta.addEventListener('submit', function(event) {
-    const validado =validacionesRutas()
-        
-    if(validado === true){
-        event.preventDefault();// PREVENIR el envío automático del formulario
-        
+formularioRuta.addEventListener('submit', function (event) {
+    event.preventDefault();// PREVENIR el envío automático del formulario
+
+
+    if (validacionesRutas() === true) {
+
         agregarRuta()
         clear(formularioRuta)
         console.log('Ruta creada');
@@ -112,40 +113,40 @@ formularioRuta.addEventListener('submit', function(event) {
     }
 });
 
-function agregarRuta(){
-    
+function agregarRuta() {
 
-    const datosRuta ={
+
+    const datosRuta = {
         id: generarId(),
-        conducor: inputConductor.value,
+        nombreRuta: inputNombreRuta.value,
+        conductor: inputConductor.value,
         hora: inputHoraSalida.value
     }
     if (idEditando) {
-        rutas = rutas.map(u => 
+        rutas = rutas.map(u =>
             u.id === idEditando ? datosRuta : u
         )
     } else {
         rutas.push(datosRuta)
+        return;
     }
 
+    renderRutas(datosRuta)
 }
 
-function renderRutas(dato_ruta){
-    contenedorRutas.innerHTML= "";
+function renderRutas(dato_ruta) {
+    contenedorRutas.innerHTML = "";
     
-    dato_ruta.forEach(element =>{
+    dato_ruta.forEach(element => {
+        // Opción 2: Usar innerHTML pero con el nombre correcto del componente
         contenedorRutas.innerHTML += `
-        
-        <div-tarjeta
-        NombreRuta= "${element.nombreRuta}"
-        conductor= "${element.conducor}"
-        Hora= "${element.hora}"
-        
-        ></div-tarjeta>
-        `
-    })
-
-
+            <tarjeta-ruta 
+                nombre-ruta="${element.nombreRuta}"
+                conductor="${element.conductor}"
+                hora="${element.hora}"
+            ></tarjeta-ruta>
+        `;
+    });
 }
 
 const template = document.createElement("template");
@@ -264,28 +265,81 @@ template.innerHTML = `
 `
 
 class tarjeta extends HTMLElement {
-    
+
     constructor() {
         super(); // inicializamos todo el compponente
         this.attachShadow({ mode: "open" })//activamos el shadow DOM
         this.shadowRoot.appendChild(template.content.cloneNode(true)); // permite clonar el molde 
+
+        this.estudiantes = [];
+
+        this.nombreElement = this.shadowRoot.querySelector('.nombre-ruta');
+        this.conductorElement = this.shadowRoot.querySelector('.conductor-texto');
+        this.horaElement = this.shadowRoot.querySelector('.hora-texto');
+        this.estudiantesContainer = this.shadowRoot.querySelector('.estudiantes');
+        this.inputEstudiante = this.shadowRoot.querySelector('.input-estudiante');
+        this.btnAgregarEstudiante = this.shadowRoot.querySelector('.btn-agregar-estudiante');
+        this.editarBtn = this.shadowRoot.querySelector('.editar-btn');
+        this.eliminarBtn = this.shadowRoot.querySelector('.eliminar-btn');
+
     }
 
     connectedCallback() {
-        const nombre = this.getAttribute("nombre");
-        const conductor = this.getAttribute("conductor");
-        const hora = this.getAttribute("hora");
+        const nombreRuta = this.getAttribute("nombreRuta")
+        const conductor = this.getAttribute("conductor")
+        const hora = this.getAttribute("hora")
 
-        this.shadowRoot.querySelector("h3").textContent = nombre;
-        this.shadowRoot.querySelector("p").textContent = conductor;
-        this.shadowRoot.querySelector("p").textContent = hora;
-        this.shadowRoot.querySelector("button").textContent = boton;
-    
-    this.shadowRoot.querySelector("button")
-    .addEventListener("click", ()=>{
-        alert("Seleccionaste: "+titulo);
-    })
-    }   
+
+        this.nombreElement.textContent = nombreRuta;
+        this.conductorElement.textContent = conductor;
+        this.horaElement.textContent = hora;
+
+        const estudiantesAttr = this.getAttribute("estudiantes");
+        if (estudiantesAttr) {
+            try {
+                this.estudiantes = JSON.parse(estudiantesAttr);
+                this.actualizarListaEstudiantes();
+            } catch (e) {
+                console.log("Error al cargar estudiantes:", e);
+            }
+        }
+
+        this.setupEventListeners();
+
+    }
+    setupEventListeners() {
+        
+        this.editarBtn.addEventListener("click", () => {
+            this.dispatchEvent(new CustomEvent("editar-tarjeta", {
+                detail: {
+                    id: this.getAttribute("data-id") || this.id,
+                    nombre: this.nombreElement.textContent,
+                    conductor: this.conductorElement.textContent,
+                    hora: this.horaElement.textContent,
+                    estudiantes: this.estudiantes
+                },
+                bubbles: true,
+                composed: true
+            }));
+        });
+
+        this.eliminarBtn.addEventListener("click", () => {
+            const confirmar = confirm(`¿Eliminar la ruta "${this.nombreElement.textContent}"?`);
+            if (confirmar) {
+                this.dispatchEvent(new CustomEvent("eliminar-tarjeta", {
+                    detail: {
+                        id: this.getAttribute("data-id") || this.id,
+                        nombre: this.nombreElement.textContent
+                    },
+                    bubbles: true,
+                    composed: true
+                }));
+                this.remove(); // Eliminar del DOM
+            }
+        });
+        
+    }
+
 }
 
 customElements.define("div-tarjeta", tarjeta)
