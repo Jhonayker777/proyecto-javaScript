@@ -35,18 +35,18 @@
 
           <div id="contenedor-input-ruta" class="campo">
             <label>Nombre de la ruta:</label>
-            <input type="text" id="nombreRuta" placeholder="Ej: Ruta Norte" >
-            
+            <input type="text" id="nombreRuta" placeholder="Ej: Ruta Norte">
+
           </div>
 
           <div id="contenedor-input-conductor" class="campo">
             <label>Conductor:</label>
-            <input type="text" id="conductor" placeholder="Ej: Juan Pérez" >
+            <input type="text" id="conductor" placeholder="Ej: Juan Pérez">
           </div>
 
           <div id="contenedor-hora-salida" class="campo">
             <label>Hora de salida:</label>
-            <input type="time" id="horaSalida" >
+            <input type="time" id="horaSalida">
           </div>
 
           <div class="grupo-botones">
@@ -62,12 +62,12 @@
         <form id="formEstudiante">
           <div class="campo">
             <label>Nombre del estudiante:</label>
-            <input type="text" id="nombreEstudiante" placeholder="Ej: María López" >
+            <input type="text" id="nombreEstudiante" placeholder="Ej: María López">
           </div>
 
           <div class="campo">
             <label>Seleccionar ruta:</label>
-            <select id="selectRuta" required>
+            <select id="selectRuta">
               <option value="">-- Selecciona una ruta --</option>
             </select>
           </div>
@@ -80,10 +80,10 @@
     <!-- ========== LISTA DE RUTAS ========== -->
     <div class="seccion-rutas">
       <h2>🚍 Mis Rutas</h2>
-      
+
       <div id="contenedorRutas" class="lista-rutas">
         <div class="mensaje-vacio">✨ No hay rutas. ¡Crea una!</div>
-      
+
       </div>
     </div>
 
@@ -106,36 +106,36 @@
   </div>
 
   <!-- Modal para editar ruta -->
-<div id="modalEditarRuta" class="modal" style="display: none;">
+  <div id="modalEditarRuta" class="modal" style="display: none;">
     <div class="modal-content">
-        <div class="modal-header">
-            <h2>✏️ Editar Ruta</h2>
-            <span class="modal-close">&times;</span>
+      <div class="modal-header">
+        <h2>✏️ Editar Ruta</h2>
+        <span class="modal-close">&times;</span>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modalEditandoId">
+
+        <div class="modal-field">
+          <label>Nombre de la ruta:</label>
+          <input type="text" id="modalNombreRuta" placeholder="Ej: Ruta Norte">
         </div>
-        <div class="modal-body">
-            <input type="hidden" id="modalEditandoId">
-            
-            <div class="modal-field">
-                <label>Nombre de la ruta:</label>
-                <input type="text" id="modalNombreRuta" placeholder="Ej: Ruta Norte">
-            </div>
-            
-            <div class="modal-field">
-                <label>Conductor:</label>
-                <input type="text" id="modalConductor" placeholder="Ej: Juan Pérez">
-            </div>
-            
-            <div class="modal-field">
-                <label>Hora de salida:</label>
-                <input type="time" id="modalHoraSalida">
-            </div>
+
+        <div class="modal-field">
+          <label>Conductor:</label>
+          <input type="text" id="modalConductor" placeholder="Ej: Juan Pérez">
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-cancelar" id="modalCancelarBtn">Cancelar</button>
-            <button type="button" class="btn-guardar" id="modalGuardarBtn">Guardar Cambios</button>
+
+        <div class="modal-field">
+          <label>Hora de salida:</label>
+          <input type="time" id="modalHoraSalida">
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-cancelar" id="modalCancelarBtn">Cancelar</button>
+        <button type="button" class="btn-guardar" id="modalGuardarBtn">Guardar Cambios</button>
+      </div>
     </div>
-</div>
+  </div>
 
   <script src="/javaScript/app.js"></script>
 </body>
