@@ -399,8 +399,9 @@ function renderRutas(dato_ruta) { //Les pasamos las listas actualizadas para mos
         });
 
         tarjeta.addEventListener("estudiante-removido", (e) => {
-            const rutaId = parseInt(e.detail.rutaId);
-            const rutaIndex = rutas.findIndex(r => r.id === rutaId);
+            const rutaId = parseInt(e.detail.rutaId);// pasamos a entero
+            const rutaIndex = rutas.findIndex(r => r.id === rutaId);// retorna la posicion donde se encuentra el estudiante
+            
             if (rutaIndex !== -1) {
                 rutas[rutaIndex].estudiantes = e.detail.estudiantes;
                 guardarRutasEnLocalStorage();
@@ -464,15 +465,15 @@ function guardarCambiosRuta() {//
         return;
     }
 
-    const rutaOriginal = rutas.find(r => r.id === idRutaEditando);
+    const rutaOriginal = rutas.find(r => r.id === idRutaEditando);// retorna el primer valor con el que coincida la busqueda
 
-    if (!rutaOriginal) {
-        console.error("No se encontro la ruta con ID:", idRutaEditando);
+    if (!rutaOriginal) {// Si no se encuentra mostramos el error y salimos de la funcion
+        console.warn("No se encontro la ruta con ID:", idRutaEditando);
         alert('Error: No se encontró la ruta a editar');
         return;
     }
 
-    rutas = rutas.map(ruta => {
+    rutas = rutas.map(ruta => {// Guardamos los cambios de la ruta
         if (ruta.id === idRutaEditando) {
             return {
                 ...ruta,
@@ -627,12 +628,14 @@ template.innerHTML = `
 
 class tarjeta extends HTMLElement {
     constructor() {
-        super();
-        this.attachShadow({ mode: "open" });
+        
+        super();//llamamos al constructor padre
+        this.attachShadow({ mode: "open" }); // creamos el shadow DOM para encapsulamiento
         this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        this.estudiantes = [];
+        this.estudiantes = []; // array donde se almacenan los estudiantes
 
+        //Elementos del sadow DOM
         this.nombreElement = this.shadowRoot.querySelector('.nombre-ruta');
         this.conductorElement = this.shadowRoot.querySelector('.conductor-texto');
         this.horaElement = this.shadowRoot.querySelector('.hora-texto');
@@ -643,19 +646,22 @@ class tarjeta extends HTMLElement {
 
     connectedCallback() {
 
+        //leer los atributos 
         const nombreRuta = this.getAttribute("nombreRuta");
         const conductor = this.getAttribute("conductor");
         const hora = this.getAttribute("hora");
 
+        //Asignamos los atributos
         this.nombreElement.textContent = nombreRuta
         this.conductorElement.textContent = conductor
         this.horaElement.textContent = hora
 
+        //Cargmaos los estudiantes si existen
         const estudiantesAttr = this.getAttribute("estudiantes");
         if (estudiantesAttr) {
             try {
-                this.estudiantes = JSON.parse(estudiantesAttr);
-                this.actualizarListaEstudiantes();
+                this.estudiantes = JSON.parse(estudiantesAttr);// convertimos de Json a objeto
+                this.actualizarListaEstudiantes();//Mostramos la lista de estudiantes
             } catch (e) {
                 console.log("Error al cargar estudiantes:", e);
                 this.estudiantes = [];
@@ -666,16 +672,17 @@ class tarjeta extends HTMLElement {
     }
 
     actualizarListaEstudiantes() {
+
         if (!this.estudiantesContainer) return;
 
-        this.estudiantesContainer.innerHTML = "";
+        this.estudiantesContainer.innerHTML = "";// Limpiamos el contenedor
 
-        if (this.estudiantes.length === 0) {
+        if (this.estudiantes.length === 0) { // si no hay estudiantes
             this.estudiantesContainer.innerHTML = '<div class="sin-estudiantes">No hay estudiantes asignados</div>';
             return;
         }
 
-        this.estudiantes.forEach(estudiante => {
+        this.estudiantes.forEach(estudiante => {// recorremos cada estudiante y creamos su elemento de forma visual
 
             const estudianteDiv = document.createElement('div');
             estudianteDiv.className = 'estudiante';
@@ -686,7 +693,7 @@ class tarjeta extends HTMLElement {
 
             const borrarBtn = estudianteDiv.querySelector('.borrar-estudiante');
             borrarBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // evita que el evento no se propague
                 this.removerEstudiante(estudiante.id);
             });
 
@@ -695,16 +702,16 @@ class tarjeta extends HTMLElement {
     }
 
     removerEstudiante(id) {
-        this.estudiantes = this.estudiantes.filter(e => e.id !== id);
-        this.actualizarListaEstudiantes();
+        this.estudiantes = this.estudiantes.filter(e => e.id !== id); // Filtramos eliminando el estudiante
+        this.actualizarListaEstudiantes();//Actualizamos visualmente
 
-        this.dispatchEvent(new CustomEvent("estudiante-removido", {
+        this.dispatchEvent(new CustomEvent("estudiante-removido", { // disparamos un evento personalizado
             detail: {
-                rutaId: this.getAttribute("data-id"),
-                estudiantes: this.estudiantes
+                rutaId: this.getAttribute("data-id"), // ID de la ruta
+                estudiantes: this.estudiantes // Lista actualizada
             },
-            bubbles: true,
-            composed: true
+            bubbles: true, // Permite que el evento suba por el DOM
+            composed: true // Permite que salga del Shadow DOM
         }));
     }
 
@@ -714,7 +721,7 @@ class tarjeta extends HTMLElement {
             this.dispatchEvent(new CustomEvent("editar-tarjeta", {// Disparador que manda una señal al aire que luego lo captara un Listerner que obtendra los datos enviados
 
                 detail: {//Datos que recibira el Listerner
-                    id: parseInt(this.getAttribute("data-id")),
+                    id: parseInt(this.getAttribute("data-id")),// ID de la ruta
                     nombreRuta: this.nombreElement.textContent,
                     conductor: this.conductorElement.textContent,
                     hora: this.horaElement.textContent,
@@ -726,7 +733,7 @@ class tarjeta extends HTMLElement {
         });
 
         this.eliminarBtn.addEventListener("click", () => {
-            const confirmar = confirm(`Eliminar la ruta "${this.nombreElement.textContent}"?`);
+            const confirmar = confirm(`Eliminar la ruta "${this.nombreElement.textContent}"?`); // Confirmacion para eliminar
             if (confirmar) {
                 this.dispatchEvent(new CustomEvent("eliminar-tarjeta", {
                     detail: {
@@ -741,15 +748,9 @@ class tarjeta extends HTMLElement {
     }
 }
 
-customElements.define("div-tarjeta", tarjeta);
-
-
-
-
-
+customElements.define("div-tarjeta", tarjeta);// Finalmente regitramos
 
 // API DEL CLIMA 
-
 async function cargarClima() {
     const contenedorClima = document.getElementById('clima');
 
